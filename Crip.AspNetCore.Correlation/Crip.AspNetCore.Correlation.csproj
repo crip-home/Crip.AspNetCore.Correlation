@@ -25,15 +25,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="$(AssemblyName).xml"/>
+        <None Remove="$(AssemblyName).xml" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="$(AssemblyName).xml"/>
+        <EmbeddedResource Include="$(AssemblyName).xml" />
     </ItemGroup>
 
     <ItemGroup>
