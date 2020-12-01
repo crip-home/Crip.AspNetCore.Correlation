@@ -13,7 +13,7 @@ namespace Crip.AspNetCore.Correlation
     public class CorrelationIdLoggingMiddleware
     {
         private readonly CorrelationIdOptions _options;
-        private readonly ILogger _logger;
+        private readonly ILogger<CorrelationIdLoggingMiddleware> _logger;
         private readonly RequestDelegate _next;
 
         /// <summary>
@@ -36,23 +36,24 @@ namespace Crip.AspNetCore.Correlation
         }
 
         /// <summary>
-        /// Invokes action the specified context.
+        /// Invokes action for the specified context.
         /// </summary>
         /// <param name="context">The HTTP context.</param>
         /// <returns>Next middleware output.</returns>
         /// <exception cref="System.ArgumentNullException">
         /// If <paramref name="context"/> not provided.
         /// </exception>
-        public Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            using (_logger.BeginScope(CreateScope(context)))
+            var scope = CreateScope(context);
+            using (_logger.BeginScope(scope))
             {
-                return _next(context);
+                await _next(context);
             }
         }
 
