@@ -16,6 +16,11 @@ public class CorrelationIdOptions
     public const string CorrelationHeaderName = "X-Correlation-Id";
 
     /// <summary>
+    /// The default correlation cookie name.
+    /// </summary>
+    public const string CorrelationCookieName = "X-Correlation-Id";
+
+    /// <summary>
     /// Gets or sets the logging field name where the correlation identifier will be
     /// written.
     /// </summary>
@@ -26,6 +31,12 @@ public class CorrelationIdOptions
     /// sent/received from.
     /// </summary>
     public string Header { get; set; } = CorrelationHeaderName;
+
+    /// <summary>
+    /// Gets or sets the cookie field name where the correlation identifier will be
+    /// sent/received from.
+    /// </summary>
+    public string Cookie { get; set; } = CorrelationCookieName;
 
     /// <summary>
     /// Gets or sets a value indicating whether correlation identifier should be returned

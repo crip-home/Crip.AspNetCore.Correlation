@@ -1,6 +1,7 @@
 ﻿using Crip.AspNetCore.Correlation.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
@@ -58,6 +59,35 @@ public class CorrelationIdMiddlewareShould
     }
 
     [Fact, Trait("Category", "Unit")]
+    public async Task Invoke_SetsCorrelationIdFromRequestCookies()
+    {
+        var middleware = Middleware();
+        MockOptions(new());
+        const string cookieKey = CorrelationIdOptions.CorrelationCookieName;
+        RequestCookieCollection cookies = new(new Dictionary<string, string> { { cookieKey, "cookie-id" } });
+        DefaultHttpContext httpContext = new() { Request = { Cookies = cookies } };
+
+        await middleware.Invoke(httpContext);
+
+        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "cookie-id"));
+    }
+
+    [Fact, Trait("Category", "Unit")]
+    public async Task Invoke_SetsCorrelationIdFromRequestHeaderIfCookieIsAvailable()
+    {
+        var middleware = Middleware();
+        MockOptions(new());
+        const string cookieKey = CorrelationIdOptions.CorrelationCookieName;
+        const string headerKey = CorrelationIdOptions.CorrelationHeaderName;
+        RequestCookieCollection cookies = new(new Dictionary<string, string> { { cookieKey, "cookie-id" } });
+        DefaultHttpContext httpContext = new() { Request = { Cookies = cookies, Headers = { { headerKey, "header-id" } } } };
+
+        await middleware.Invoke(httpContext);
+
+        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id"));
+    }
+
+    [Fact, Trait("Category", "Unit")]
     public async Task Invoke_SetsCorrelationIdFromRequestHeadersCaseInsensitive()
     {
         var middleware = Middleware();
@@ -68,6 +98,20 @@ public class CorrelationIdMiddlewareShould
         await middleware.Invoke(httpContext);
 
         _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id"));
+    }
+
+    [Fact, Trait("Category", "Unit")]
+    public async Task Invoke_SetsCorrelationIdFromRequestHeadersFirstValue()
+    {
+        var middleware = Middleware();
+        MockOptions(new());
+        const string headerKey = CorrelationIdOptions.CorrelationHeaderName;
+        var values = new StringValues(new[] { "header-id-1", "header-id-2" });
+        DefaultHttpContext httpContext = new() { Request = { Headers = { { headerKey, values } } } };
+
+        await middleware.Invoke(httpContext);
+
+        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id-1"));
     }
 
     [Fact, Trait("Category", "Unit")]

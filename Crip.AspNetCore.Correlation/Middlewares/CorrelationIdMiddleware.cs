@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Crip.AspNetCore.Correlation.Exceptions;
 using Crip.AspNetCore.Correlation.Services;
@@ -79,7 +80,12 @@ public class CorrelationIdMiddleware
 
     private string? GetIdentifier(HttpContext context)
     {
-        if (context.Request.Headers.TryGetValue(_options.Value.Header, out var correlationId))
+        if (context.Request.Headers.TryGetValue(_options.Value.Header, out var correlationIds))
+        {
+            return correlationIds.FirstOrDefault();
+        }
+
+        if (context.Request.Cookies.TryGetValue(_options.Value.Cookie, out var correlationId))
         {
             return correlationId;
         }
