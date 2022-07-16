@@ -17,103 +17,91 @@ using Serilog.Formatting.Display;
 using Serilog.Sinks.TestCorrelator;
 using Xunit;
 
-namespace Crip.AspNetCore.Correlation.Tests.Middlewares
+namespace Crip.AspNetCore.Correlation.Tests.Middlewares;
+
+public class CorrelationIdLoggingMiddlewareShould
 {
-    public class CorrelationIdLoggingMiddlewareShould
+    [Fact, Trait("Category", "Unit")]
+    public void Constructor_CanCreateInstance()
     {
-        [Fact, Trait("Category", "Unit")]
-        public void CorrelationIdLoggingMiddleware_Construct_CanCreateInstance()
+        var options = Options.Create<CorrelationIdOptions>(new());
+        Mock<ILogger<CorrelationIdLoggingMiddleware>> loggerMock = new();
+        Task RequestDelegate(HttpContext ctx) => Task.CompletedTask;
+
+        Action act = () => new CorrelationIdLoggingMiddleware(options, loggerMock.Object, RequestDelegate);
+
+        act.Should().NotThrow();
+    }
+
+    [Fact, Trait("Category", "Unit")]
+    public async Task Invoke_LogsDelegateActionWithRequiredScopeProperty()
+    {
+        var logger = CreateLoggerFactory().CreateLogger<CorrelationIdLoggingMiddleware>();
+        var options = Options.Create<CorrelationIdOptions>(new()
         {
-            // Arrange
-            IOptions<CorrelationIdOptions> options = Options.Create<CorrelationIdOptions>(new());
-            Mock<ILogger<CorrelationIdLoggingMiddleware>> loggerMock = new();
-            Task RequestDelegate(HttpContext ctx) => Task.CompletedTask;
+            PropertyName = "P1",
+        });
 
-            // Act
-            Action act = () => new CorrelationIdLoggingMiddleware(options, loggerMock.Object, RequestDelegate);
-
-            // Assert
-            act.Should().NotThrow();
+        Task RequestDelegate(HttpContext ctx)
+        {
+            logger.LogDebug("context log message");
+            return Task.CompletedTask;
         }
 
-        [Fact, Trait("Category", "Unit")]
-        public async Task CorrelationIdLoggingMiddleware_Invoke_LogsDelegateActionWithRequiredScopeProperty()
-        {
-            // Arrange
-            var logger = CreateLoggerFactory().CreateLogger<CorrelationIdLoggingMiddleware>();
-            IOptions<CorrelationIdOptions> options = Options.Create<CorrelationIdOptions>(new()
-            {
-                PropertyName = "P1",
-            });
+        CorrelationIdLoggingMiddleware middleware = new(options, logger, RequestDelegate);
+        HttpContext context = new DefaultHttpContext { TraceIdentifier = "T1" };
 
-            Task RequestDelegate(HttpContext ctx)
-            {
-                logger.LogDebug("context log message");
-                return Task.CompletedTask;
-            }
+        using var _ = TestCorrelator.CreateContext();
+        logger.LogInformation("Before");
+        await middleware.Invoke(context);
+        logger.LogInformation("After");
 
-            CorrelationIdLoggingMiddleware middleware = new(options, logger, RequestDelegate);
-            HttpContext context = new DefaultHttpContext { TraceIdentifier = "T1" };
+        var logs = TestCorrelator.GetLogEventsFromCurrentContext().Select(FormatLogEvent).ToList();
+        var sourceContext = "SourceContext: \"Crip.AspNetCore.Correlation.CorrelationIdLoggingMiddleware\"";
+        logs.Should().BeEquivalentTo(
+            $"Information: Before {{ {sourceContext} }}",
+            $"Debug: context log message {{ {sourceContext}, P1: \"T1\" }}",
+            $"Information: After {{ {sourceContext} }}");
+    }
 
-            // Act
-            using var _ = TestCorrelator.CreateContext();
-            logger.LogInformation("Before");
-            await middleware.Invoke(context);
-            logger.LogInformation("After");
+    [Fact, Trait("Category", "Unit")]
+    public async Task Invoke_FailsIfContextNotProvided()
+    {
+        var options = Options.Create<CorrelationIdOptions>(new());
+        Mock<ILogger<CorrelationIdLoggingMiddleware>> loggerMock = new();
+        Task RequestDelegate(HttpContext ctx) => Task.CompletedTask;
+        CorrelationIdLoggingMiddleware middleware = new(options, loggerMock.Object, RequestDelegate);
 
-            // Assert
-            List<string> logs = TestCorrelator.GetLogEventsFromCurrentContext().Select(FormatLogEvent).ToList();
-            var sourceContext = "SourceContext: \"Crip.AspNetCore.Correlation.CorrelationIdLoggingMiddleware\"";
-            logs.Should().BeEquivalentTo(
-                $"Information: Before {{ {sourceContext} }}",
-                $"Debug: context log message {{ {sourceContext}, P1: \"T1\" }}",
-                $"Information: After {{ {sourceContext} }}");
-        }
+        Func<Task> act = async () => await middleware.Invoke(null!);
 
-        [Fact, Trait("Category", "Unit")]
-        public async Task CorrelationIdLoggingMiddleware_Invoke_FailsIfContextNotProvided()
-        {
-            // Arrange
-            IOptions<CorrelationIdOptions> options = Options.Create<CorrelationIdOptions>(new());
-            Mock<ILogger<CorrelationIdLoggingMiddleware>> loggerMock = new();
-            Task RequestDelegate(HttpContext ctx) => Task.CompletedTask;
-            CorrelationIdLoggingMiddleware middleware = new(options, loggerMock.Object, RequestDelegate);
+        await act.Should()
+            .ThrowExactlyAsync<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'context')");
+    }
 
-            // Act
-            Func<Task> act = async () => await middleware.Invoke(null!);
+    private static ILoggerFactory CreateLoggerFactory()
+    {
+        var logger = CreateCorrelatorLogger();
 
-            // Assert
-            await act.Should()
-                .ThrowExactlyAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'context')");
-        }
+        return new SerilogLoggerFactory(logger);
+    }
 
-        private static ILoggerFactory CreateLoggerFactory()
-        {
-            var logger = CreateCorrelatorLogger();
+    private static Logger CreateCorrelatorLogger() =>
+        new LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .WriteTo.TestCorrelator()
+            .Enrich.FromLogContext()
+            .CreateLogger();
 
-            return new SerilogLoggerFactory(logger);
-        }
+    private static string FormatLogEvent(LogEvent logEvent)
+    {
+        const string template = "{Level}: {Message:lj} {Properties}";
 
-        private static Logger CreateCorrelatorLogger()
-        {
-            return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.TestCorrelator()
-                .Enrich.FromLogContext()
-                .CreateLogger();
-        }
+        var culture = CultureInfo.InvariantCulture;
+        MessageTemplateTextFormatter formatter = new(template, culture);
+        StringWriter writer = new();
+        formatter.Format(logEvent, writer);
 
-        private string FormatLogEvent(LogEvent logEvent)
-        {
-            const string template = "{Level}: {Message:lj} {Properties}";
-
-            var culture = CultureInfo.InvariantCulture;
-            MessageTemplateTextFormatter formatter = new(template, culture);
-            StringWriter writer = new();
-            formatter.Format(logEvent, writer);
-
-            return writer.ToString();
-        }
+        return writer.ToString();
     }
 }
