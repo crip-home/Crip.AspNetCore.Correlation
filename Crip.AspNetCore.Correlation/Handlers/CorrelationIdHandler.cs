@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS1574
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
