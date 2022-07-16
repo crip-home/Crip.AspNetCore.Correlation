@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Crip.AspNetCore.Correlation.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Crip.AspNetCore.Correlation;
 
@@ -12,27 +11,27 @@ namespace Crip.AspNetCore.Correlation;
 /// </summary>
 public class CorrelationIdLoggingMiddleware
 {
-    private readonly IOptions<CorrelationIdOptions> _options;
     private readonly ILogger<CorrelationIdLoggingMiddleware> _logger;
+    private readonly ICorrelationService _correlation;
     private readonly RequestDelegate _next;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationIdLoggingMiddleware"/> class.
     /// </summary>
-    /// <param name="options">The correlation identifier options.</param>
     /// <param name="logger">The logging service.</param>
+    /// <param name="correlation">The correlation identifier service.</param>
     /// <param name="next">The request delegate.</param>
     /// <exception cref="System.ArgumentNullException">
-    /// If <paramref name="options"/> or <paramref name="logger"/> or <paramref name="next"/>
+    /// If <paramref name="logger"/> or <paramref name="correlation"/> or <paramref name="next"/>
     /// is not provided.
     /// </exception>
     public CorrelationIdLoggingMiddleware(
-        IOptions<CorrelationIdOptions> options,
         ILogger<CorrelationIdLoggingMiddleware> logger,
+        ICorrelationService correlation,
         RequestDelegate next)
     {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _correlation = correlation ?? throw new ArgumentNullException(nameof(correlation));
         _next = next ?? throw new ArgumentNullException(nameof(next));
     }
 
@@ -48,11 +47,8 @@ public class CorrelationIdLoggingMiddleware
     {
         if (context is null) throw new ArgumentNullException(nameof(context));
 
-        var scope = CreateScope(context);
+        var scope = _correlation.Scope(context);
 
         using (_logger.BeginScope(scope)) await _next(context);
     }
-
-    private Dictionary<string, object> CreateScope(HttpContext context) =>
-        new() { { _options.Value.PropertyName, context.TraceIdentifier } };
 }

@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Crip.AspNetCore.Correlation.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -23,22 +23,22 @@ public class CorrelationIdHandler : DelegatingHandler
     private const StringComparison CompareIgnoreCase = StringComparison.InvariantCultureIgnoreCase;
 
     private readonly IOptions<CorrelationIdOptions> _options;
-    private readonly IHttpContextAccessor _context;
+    private readonly ICorrelationAccessor _correlation;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationIdHandler"/> class.
     /// </summary>
     /// <param name="options">The correlation identifier options.</param>
-    /// <param name="context">The HTTP context accessor.</param>
+    /// <param name="correlation">The HTTP context correlation identifier accessor.</param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown if <paramref name="options"/> or <paramref name="context"/> is not provided.
+    /// Thrown if <paramref name="options"/> or <paramref name="correlation"/> is not provided.
     /// </exception>
     public CorrelationIdHandler(
         IOptions<CorrelationIdOptions> options,
-        IHttpContextAccessor context)
+        ICorrelationAccessor correlation)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _correlation = correlation ?? throw new ArgumentNullException(nameof(correlation));
     }
 
     /// <summary>
@@ -51,8 +51,7 @@ public class CorrelationIdHandler : DelegatingHandler
     /// Get existing correlation identifier from current HTTP context accessor.
     /// </summary>
     /// <returns>Correlation identifier value or <c>null</c>, if not found.</returns>
-    protected virtual string? GetExistingIdentifier() =>
-        _context.HttpContext?.TraceIdentifier;
+    protected virtual string? GetExistingIdentifier() => _correlation.Get();
 
     /// <inheritdoc />
     protected override async Task<HttpResponseMessage> SendAsync(
