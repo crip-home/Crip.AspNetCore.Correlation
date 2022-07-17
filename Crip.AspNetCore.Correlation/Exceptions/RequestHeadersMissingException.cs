@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Crip.AspNetCore.Correlation.Exceptions;
 
 /// <summary>
 /// HTTP request missing headers exception.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class RequestHeadersMissingException : ApplicationException
 {
     /// <summary>

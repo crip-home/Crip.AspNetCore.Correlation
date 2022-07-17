@@ -73,6 +73,20 @@ public class CorrelationIdMiddlewareShould
     }
 
     [Fact, Trait("Category", "Unit")]
+    public async Task Invoke_SetsCorrelationIdFromRequestCustomCookies()
+    {
+        var middleware = Middleware();
+        const string cookieKey = "custom";
+        MockOptions(new() { Cookie = cookieKey });
+        RequestCookieCollection cookies = new(new Dictionary<string, string> { { cookieKey, "cookie-id" } });
+        DefaultHttpContext httpContext = new() { Request = { Cookies = cookies } };
+
+        await middleware.Invoke(httpContext);
+
+        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "cookie-id"));
+    }
+
+    [Fact, Trait("Category", "Unit")]
     public async Task Invoke_SetsCorrelationIdFromRequestHeaderIfCookieIsAvailable()
     {
         var middleware = Middleware();

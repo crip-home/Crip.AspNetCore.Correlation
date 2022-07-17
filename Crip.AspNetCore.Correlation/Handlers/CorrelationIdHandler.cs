@@ -23,7 +23,7 @@ public class CorrelationIdHandler : DelegatingHandler
     private const StringComparison CompareIgnoreCase = StringComparison.InvariantCultureIgnoreCase;
 
     private readonly IOptions<CorrelationIdOptions> _options;
-    private readonly ICorrelationAccessor _correlation;
+    private readonly IHttpCorrelationAccessor _correlation;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationIdHandler"/> class.
@@ -35,7 +35,7 @@ public class CorrelationIdHandler : DelegatingHandler
     /// </exception>
     public CorrelationIdHandler(
         IOptions<CorrelationIdOptions> options,
-        ICorrelationAccessor correlation)
+        IHttpCorrelationAccessor correlation)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
         _correlation = correlation ?? throw new ArgumentNullException(nameof(correlation));

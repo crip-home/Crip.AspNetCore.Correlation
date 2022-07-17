@@ -1,12 +1,12 @@
 ﻿namespace Crip.AspNetCore.Correlation.Services;
 
 /// <summary>
-/// Correlation identifier accessor contract.
+/// HTTP request correlation identifier accessor contract.
 /// </summary>
-public interface ICorrelationAccessor
+public interface IHttpCorrelationAccessor
 {
     /// <summary>
-    /// Get correlation identifier from https context accessor.
+    /// Get correlation identifier from HTTP context accessor.
     /// </summary>
     /// <returns>Correlation identifier if available in HTTP context.</returns>
     string? Get();

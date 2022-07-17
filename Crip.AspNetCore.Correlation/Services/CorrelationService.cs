@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Crip.AspNetCore.Correlation.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -18,16 +19,22 @@ public class CorrelationService : ICorrelationService
     /// <param name="options">The correlation identifier options.</param>
     public CorrelationService(IOptions<CorrelationIdOptions> options)
     {
-        _options = options;
+        _options = options ?? throw new ArgumentNullException(nameof(options));
     }
 
     /// <inheritdoc />
-    public string? Get(HttpContext httpContext) =>
-        httpContext.Features.Get<ICorrelationFeature>()?.Id;
+    public string? Get(HttpContext httpContext)
+    {
+        if (httpContext is null) throw new ArgumentNullException(nameof(httpContext));
+
+        return httpContext.Features.Get<ICorrelationFeature>()?.Id;
+    }
 
     /// <inheritdoc />
     public void Set(HttpContext httpContext, string id)
     {
+        if (httpContext is null) throw new ArgumentNullException(nameof(httpContext));
+
         CorrelationFeature feature = new(id);
         httpContext.Features.Set<ICorrelationFeature>(feature);
     }
