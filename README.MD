@@ -23,7 +23,7 @@ services.AddCorrelation();
 Configure pipeline:
 
 ```csharp
-// Add middlewares as eraly as possible
+// Add middlewares as early as possible
 app.UseCorrelation();
 // or
 app.UseMiddleware<CorrelationIdMiddleware>();
