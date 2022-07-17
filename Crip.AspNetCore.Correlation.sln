@@ -23,12 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{49
 		examples\Crip.AspNetCore.Correlation.postman_collection.json = examples\Crip.AspNetCore.Correlation.postman_collection.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{0F6C2EA8-25E4-4F39-B700-AA73A9785FA5}"
-	ProjectSection(SolutionItems) = preProject
-		scripts\ci.yml = scripts\ci.yml
-		scripts\GetBuildVersion.psm1 = scripts\GetBuildVersion.psm1
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
