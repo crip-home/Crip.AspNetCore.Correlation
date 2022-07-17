@@ -18,7 +18,7 @@ namespace Crip.AspNetCore.Correlation;
 /// requests. Component requires that DI has registration for HttpContext
 /// accessor <see cref="HttpServiceCollectionExtensions.AddHttpContextAccessor(IServiceCollection)"/>.
 /// </summary>
-public class CorrelationIdHandler : DelegatingHandler
+public class CorrelationIdHeaderHandler : DelegatingHandler
 {
     private const StringComparison CompareIgnoreCase = StringComparison.InvariantCultureIgnoreCase;
 
@@ -26,14 +26,14 @@ public class CorrelationIdHandler : DelegatingHandler
     private readonly IHttpCorrelationAccessor _correlation;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CorrelationIdHandler"/> class.
+    /// Initializes a new instance of the <see cref="CorrelationIdHeaderHandler"/> class.
     /// </summary>
     /// <param name="options">The correlation identifier options.</param>
     /// <param name="correlation">The HTTP context correlation identifier accessor.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="options"/> or <paramref name="correlation"/> is not provided.
     /// </exception>
-    public CorrelationIdHandler(
+    public CorrelationIdHeaderHandler(
         IOptions<CorrelationIdOptions> options,
         IHttpCorrelationAccessor correlation)
     {
