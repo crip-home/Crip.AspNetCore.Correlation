@@ -35,7 +35,7 @@ public static class ServiceExtensions
     /// </typeparam>
     /// <typeparam name="TImplementation">
     /// The implementation type of the typed client. The type specified will be instantiated by the
-    /// <see cref="ITypedHttpClientFactory{TImplementation}"/>
+    /// <see cref="ITypedHttpClientFactory{TImplementation}"/>.
     /// </typeparam>
     /// <returns>An <see cref="IHttpClientBuilder"/> that can be used to configure the client.</returns>
     public static IHttpClientBuilder AddTracedHttpClient<TClient, TImplementation>(
@@ -78,7 +78,7 @@ public static class ServiceExtensions
     /// </typeparam>
     /// <typeparam name="TImplementation">
     /// The implementation type of the typed client. The type specified will be instantiated by the
-    /// <see cref="ITypedHttpClientFactory{TImplementation}"/>
+    /// <see cref="ITypedHttpClientFactory{TImplementation}"/>.
     /// </typeparam>
     /// <returns>An <see cref="IHttpClientBuilder"/> that can be used to configure the client.</returns>
     public static IHttpClientBuilder AddTracedHttpClient<TClient, TImplementation>(
@@ -102,7 +102,7 @@ public static class ServiceExtensions
     /// </typeparam>
     /// <typeparam name="TImplementation">
     /// The implementation type of the typed client. The type specified will be instantiated by the
-    /// <see cref="ITypedHttpClientFactory{TImplementation}"/>
+    /// <see cref="ITypedHttpClientFactory{TImplementation}"/>.
     /// </typeparam>
     /// <returns>An <see cref="IHttpClientBuilder"/> that can be used to configure the client.</returns>
     public static IHttpClientBuilder AddTracedHttpClient<TClient, TImplementation>(

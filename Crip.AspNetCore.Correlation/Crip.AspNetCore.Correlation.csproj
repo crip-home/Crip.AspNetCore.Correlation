@@ -5,6 +5,7 @@
         <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
         <PackageId>$(AssemblyName)</PackageId>
         <Version>1.0.0.0</Version>
