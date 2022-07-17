@@ -43,30 +43,12 @@ jobs:
       - name: 🔨 Setup .NET 3.1
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.421
-
-      - name: 🔨 Setup .NET 5.0
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.408
+          dotnet-version: 3.1.x
 
       - name: 🔨 Setup .NET 6.0
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
-
-      - name: 🪓 **DOTNET HACK** 🪓
-        shell: pwsh
-        run: |
-          $version = Split-Path (Split-Path $ENV:DOTNET_ROOT -Parent) -Leaf;
-          $root = Split-Path (Split-Path $ENV:DOTNET_ROOT -Parent) -Parent;
-          $directories = Get-ChildItem $root | Where-Object { $_.Name -ne $version };
-          foreach ($dir in $directories) {
-            $from = $dir.FullName;
-            $to = "$root/$version";
-            Write-Host Copying from $from to $to;
-            Copy-Item "$from\*" $to -Recurse -Force;
-          }
 
       - name: Restore dependencies
         run: nuget restore $SOLUTION
