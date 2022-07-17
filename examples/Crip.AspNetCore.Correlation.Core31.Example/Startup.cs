@@ -36,8 +36,7 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseMiddleware<CorrelationIdMiddleware>();
-        app.UseMiddleware<CorrelationIdLoggingMiddleware>();
+        app.UseCorrelation();
 
         app.UseHttpsRedirection();
         app.UseRouting();
