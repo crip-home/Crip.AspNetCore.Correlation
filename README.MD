@@ -5,6 +5,8 @@ is only valuable as an interactive tool to help the Admin track down your error.
 "breadcrumbs" to retrace a requests or processes in the Logging System to find what leads up to
 and causes a problem.
 
+![Correlation usage diagram](correlation.drawio.png)
+
 ## Installation
 
 TODO: create NuGet package to be able install
@@ -26,4 +28,31 @@ app.UseCorrelation();
 // or
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<CorrelationIdLoggingMiddleware>();
+```
+
+## HTTP client correlation
+
+Correlation makes sense only when entire system is using same Correlation ID. To do so, you can use "traced" HTTP client
+witch will automatically add header to all outgoing requests.
+
+```csharp
+services.AddTracedHttpClient<TClient, TImplementation>(((provider, client) =>
+{
+    var config = provider.GetRequiredService<IOptions<TClientOptions>>().Value;
+    client.BaseAddress = new Uri(config.BaseUrl);
+}));
+```
+
+## Customization
+
+You can customize correlation by providing custom options:
+
+```csharp
+services.Configure<CorrelationIdOptions>(options =>
+{
+    options.Cookie = "X-Correlation-Id"; // name of the cookie key to use as correlation identifier
+    options.Header = "X-Correlation-Id"; // name of the HTTP request/response header
+    options.PropertyName = "CorrelationId"; // name of the loggable property
+    options.IncludeInResponse = true; // include correlation identifier header in responses
+});
 ```
