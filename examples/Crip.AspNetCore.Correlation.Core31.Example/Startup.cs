@@ -19,6 +19,13 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+        services.AddHttpContextAccessor();
+        services.Configure<CorrelationIdOptions>(options =>
+        {
+            options.IncludeInResponse = true;
+        });
+
+        services.AddCorrelation();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,12 +36,12 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
+        app.UseMiddleware<CorrelationIdMiddleware>();
+        app.UseMiddleware<CorrelationIdLoggingMiddleware>();
+
         app.UseHttpsRedirection();
-
         app.UseRouting();
-
         app.UseAuthorization();
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

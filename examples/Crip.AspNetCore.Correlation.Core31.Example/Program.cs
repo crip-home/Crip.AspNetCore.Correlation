@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Crip.AspNetCore.Correlation.Core31.Example;
 
@@ -15,5 +16,7 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
-            });
+            })
+            .UseSerilog(((context, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration)));
 }

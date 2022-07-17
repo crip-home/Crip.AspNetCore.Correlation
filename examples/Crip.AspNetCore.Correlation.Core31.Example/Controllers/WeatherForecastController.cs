@@ -25,6 +25,7 @@ public class WeatherForecastController : ControllerBase
     [HttpGet]
     public IEnumerable<WeatherForecast> Get()
     {
+        _logger.LogCritical("get WeatherForecast");
         var rng = new Random();
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

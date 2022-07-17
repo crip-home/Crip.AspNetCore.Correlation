@@ -1,0 +1,61 @@
+{
+	"info": {
+		"_postman_id": "074cd2e8-16c2-4046-84ee-378b68826aef",
+		"name": "Crip.AspNetCore.Correlation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "339835"
+	},
+	"item": [
+		{
+			"name": "net core 3.1 /weatherforecast",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set('correlation_id', pm.variables.replaceIn('test-{{$guid}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', () => pm.response.to.have.status(200));\r",
+							"pm.test('Response correlation header is set', () => {\r",
+							"    const correlationId = pm.variables.get('correlation_id');\r",
+							"    const header = pm.response.headers.find(header => header.key === 'X-Correlation-Id');\r",
+							"    pm.expect(header).to.not.be.undefined;\r",
+							"    pm.expect(header).to.haveOwnProperty('value', correlationId);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Correlation-Id",
+						"value": "{{correlation_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/weatherforecast",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"weatherforecast"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

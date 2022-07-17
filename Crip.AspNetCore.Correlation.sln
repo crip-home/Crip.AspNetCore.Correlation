@@ -18,6 +18,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Correlation.Core31.Example", "examples\Crip.AspNetCore.Correlation.Core31.Example\Crip.AspNetCore.Correlation.Core31.Example.csproj", "{C6AB3F10-72E7-48CF-BA46-2C7AB0783064}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{494AA875-6285-41ED-9CFC-4F46BDBEC607}"
+	ProjectSection(SolutionItems) = preProject
+		examples\Crip.AspNetCore.Correlation.postman_collection.json = examples\Crip.AspNetCore.Correlation.postman_collection.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
