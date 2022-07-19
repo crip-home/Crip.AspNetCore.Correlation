@@ -16,7 +16,7 @@
     <PackageDescription>AspNetCore request correlation.</PackageDescription>
     <RepositoryUrl>https://github.com/crip-home/Crip.AspNetCore.Correlation</RepositoryUrl>
     <PackageProjectUrl>https://github.com/crip-home/Crip.AspNetCore.Correlation</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/crip-home/Crip.AspNetCore.Correlation/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.MD</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <PackageTags>AspNetCore, HTTP, log, correlation</PackageTags>
@@ -30,6 +30,7 @@
     <None Remove="$(AssemblyName).xml"/>
     <None Include="../README.MD" Pack="true" PackagePath="\"/>
     <None Include="../correlation.drawio.png" Pack="true" PackagePath="\"/>
+    <None Include="../LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
