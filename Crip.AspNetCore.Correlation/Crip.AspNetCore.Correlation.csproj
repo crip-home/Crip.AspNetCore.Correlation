@@ -17,6 +17,7 @@
         <RepositoryUrl>https://github.com/crip-home/Crip.AspNetCore.Correlation</RepositoryUrl>
         <PackageProjectUrl>https://github.com/crip-home/Crip.AspNetCore.Correlation</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/crip-home/Crip.AspNetCore.Correlation/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageReadmeFile>../README.MD</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
         <PackageTags>AspNetCore, HTTP, log, correlation</PackageTags>
     </PropertyGroup>
