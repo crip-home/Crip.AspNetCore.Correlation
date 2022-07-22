@@ -1,5 +1,10 @@
 # CRIP AspNetCore Correlation
 
+![issues](https://img.shields.io/github/issues/crip-home/Crip.AspNetCore.Correlation?style=for-the-badge&logo=appveyor)
+![forks](https://img.shields.io/github/forks/crip-home/Crip.AspNetCore.Correlation?style=for-the-badge&logo=appveyor)
+![stars](https://img.shields.io/github/stars/crip-home/Crip.AspNetCore.Correlation?style=for-the-badge&logo=appveyor)
+![license](https://img.shields.io/github/license/crip-home/Crip.AspNetCore.Correlation?style=for-the-badge&logo=appveyor)
+
 The correlation ID is meant to be used to help Admin trace what was happening at the time of an error/request. It
 is only valuable as an interactive tool to help the Admin track down your error. An Admin uses the correlation ID as
 "breadcrumbs" to retrace a requests or processes in the Logging System to find what leads up to
@@ -9,7 +14,8 @@ and causes a problem.
 
 ## Installation
 
-TODO: create NuGet package to be able install
+Install [Crip.AspNetCore.Correlation NuGet package](https://www.nuget.org/packages/Crip.AspNetCore.Correlation),
+or [GitHub package](https://github.com/orgs/crip-home/packages?repo_name=Crip.AspNetCore.Correlation)
 
 ## Setup
 
