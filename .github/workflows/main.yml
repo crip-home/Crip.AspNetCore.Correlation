@@ -36,7 +36,7 @@ jobs:
         run: |
           arrTag=(${GITHUB_REF//\// })
           BUILD_VERSION="${arrTag[2]}"
-          BUILD_VERSION="${VERSION//v}"
+          BUILD_VERSION="${BUILD_VERSION//v}"
           echo "BUILD_VERSION=${BUILD_VERSION}" >> $GITHUB_ENV
           echo $BUILD_VERSION
         shell: bash
